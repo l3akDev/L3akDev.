@@ -1,0 +1,288 @@
+local Window = OrionLib:MakeWindow({Name = "ryo999 hub", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
+
+--[[
+Name = <string> - The name of the UI.
+HidePremium = <bool> - Whether or not the user details shows Premium status or not.
+SaveConfig = <bool> - Toggles the config saving in the UI.
+ConfigFolder = <string> - The name of the folder where the configs are saved.
+IntroEnabled = <bool> - Whether or not to show the intro animation.
+IntroText = <string> - Text to show in the intro animation.
+IntroIcon = <string> - URL to the image you want to use in the intro animation.
+Icon = <string> - URL to the image you want displayed on the window.
+CloseCallback = <function> - Function to execute when the window is closed.
+]]
+local Tab = Window:MakeTab({
+	Name = "Tab 1",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+--[[
+Name = <string> - The name of the tab.
+Icon = <string> - The icon of the tab.
+PremiumOnly = <bool> - Makes the tab accessible to Sirus Premium users only.
+]]
+local Section = Tab:AddSection({
+	Name = "Section"
+})
+
+--[[
+Name = <string> - The name of the section.
+]]
+OrionLib:MakeNotification({
+	Name = "Title!",
+	Content = "Notification content... what will it say??",
+	Image = "rbxassetid://4483345998",
+	Time = 5
+})
+
+--[[
+Title = <string> - The title of the notification.
+Content = <string> - The content of the notification.
+Image = <string> - The icon of the notification.
+Time = <number> - The duration of the notfication.
+]]
+Tab:AddButton({
+	Name = "aimbot and esp!",
+	Callback = function()
+      		print("button pressed")
+  	end    
+})
+
+--[[
+Name = <string>
+Callback = <function>
+-- Create a LocalScript in StarterPlayer -> StarterPlayerScripts
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local Camera = workspace.CurrentCamera
+local Mouse = LocalPlayer:GetMouse()
+local Humanoid = LocalPlayer.Character:WaitForChild("Humanoid")
+
+-- Function to highlight a player with their team color
+local function highlightPlayer(player)
+    local character = player.Character
+    if character and character:FindFirstChild("Humanoid") then
+        local humanoid = character:WaitForChild("Humanoid")
+
+        -- Example: Change player's color based on their team
+        local teamColor = player.TeamColor
+        humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.TeamColor
+
+        -- Create a TextLabel with player's name and team color
+        local label = Instance.new("BillboardGui")
+        label.Adornee = character.Head
+        label.Size = UDim2.new(0, 200, 0, 50)
+        label.StudsOffset = Vector3.new(0, 3, 0)
+        
+        local text = Instance.new("TextLabel")
+        text.Size = UDim2.new(1, 0, 1, 0)
+        text.Text = player.Name
+        text.Font = Enum.Font.SourceSansBold
+        text.TextStrokeTransparency = 0
+        text.TextStrokeColor3 = Color3.new(0, 0, 0)
+        text.TextColor3 = teamColor.Color
+        text.Parent = label
+
+        label.Parent = character
+        wait(5) -- Display the TextLabel for 5 seconds (you can adjust this)
+        label:Destroy()
+        humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
+    end
+end
+
+-- Function to aim at a player's head
+local function aimAtHead()
+    local targetPlayer = nil
+
+    -- Raycasting to find the player's head
+    local ray = Camera:ScreenPointToRay(Mouse.X, Mouse.Y)
+    local hitPart, hitPosition = workspace:FindPartOnRay(ray, nil, false, true)
+
+    if hitPart and hitPart:IsA("Head") then
+        targetPlayer = Players:GetPlayerFromCharacter(hitPart.Parent)
+    end
+
+    -- Aim at the target player's head
+    if targetPlayer then
+        local targetHead = targetPlayer.Character:FindFirstChild("Head")
+        if targetHead then
+            local lookAtPosition = targetHead.Position
+            Camera.CFrame = CFrame.new(Camera.CFrame.Position, lookAtPosition)
+        end
+    end
+end
+
+-- Function to boost player speed
+local function boostSpeed()
+    Humanoid.WalkSpeed = Humanoid.WalkSpeed * 10 -- Adjust the multiplier as needed
+end
+
+-- Function to calculate the distance between two points
+local function calculateDistance(point1, point2)
+    return (point1 - point2).Magnitude
+end
+
+-- Function to show player distance
+local function showPlayerDistance(targetPlayer)
+    local targetCharacter = targetPlayer.Character
+    if targetCharacter then
+        local targetHead = targetCharacter:FindFirstChild("Head")
+        if targetHead then
+            local playerPosition = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Head") and LocalPlayer.Character.Head.Position
+            local targetPosition = targetHead.Position
+
+            if playerPosition then
+                local distance = calculateDistance(playerPosition, targetPosition)
+
+                -- Display the distance (you can customize this based on your UI preferences)
+                print("Distance to " .. targetPlayer.Name .. ": " .. distance)
+            end
+        end
+    end
+end
+
+-- Connect the function to mouse button presses
+Mouse.Button1Down:Connect(function()
+    aimAtHead()
+end)
+
+Mouse.Button2Down:Connect(function()
+    aimAtHead()
+end)
+
+-- Connect the function to the 'F' key press
+game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessedEvent)
+    if not gameProcessedEvent and input.KeyCode == Enum.KeyCode.F then
+        boostSpeed()
+    end
+end)
+
+-- Connect the function to the 'G' key press
+game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessedEvent)
+    if not gameProcessedEvent and input.KeyCode == Enum.KeyCode.G then
+        -- Replace 'TargetPlayer' with the player you want to measure the distance to
+        local targetPlayer = Players:FindFirstChild("TargetPlayer")
+        if targetPlayer and targetPlayer ~= LocalPlayer then
+            showPlayerDistance(targetPlayer)
+        end
+    end
+end)
+
+-- Loop through all players and highlight them
+for _, player in pairs(Players:GetPlayers()) do
+    if player ~= LocalPlayer then
+        highlightPlayer(player)
+    end
+end
+
+-- Connect a function to handle new players joining
+Players.PlayerAdded:Connect(function(player)
+    highlightPlayer(player)
+end)
+]]
+Tab:AddToggle({
+	Name = "This is a toggle!",
+	Default = false,
+	Callback = function(Value)
+		print(Value)
+	end    
+})
+
+--[[
+Name = <string> - The name of the toggle.
+Default = <bool> - The default value of the toggle.
+Callback = <function> - The function of the toggle.
+]]
+CoolToggle:Set(true)
+Tab:AddColorpicker({
+	Name = "Colorpicker",
+	Default = Color3.fromRGB(255, 0, 0),
+	Callback = function(Value)
+		print(Value)
+	end	  
+})
+
+--[[
+Name = <string> - The name of the colorpicker.
+Default = <color3> - The default value of the colorpicker.
+Callback = <function>
+ColorPicker:Set(Color3.fromRGB(255,255,255))
+]]
+Tab:AddSlider({
+	Name = "Slider",
+	Min = 0,
+	Max = 20,
+	Default = 5,
+	Color = Color3.fromRGB(255,255,255),
+	Increment = 1,
+	ValueName = "bananas",
+	Callback = function(Value)
+		print(Value)
+	end    
+})
+
+--[[
+Name = <string> - The name of the slider.
+Min = <number> - The minimal value of the slider.
+Max = <number> - The maxium value of the slider.
+Increment = <number> - How much the slider will change value when dragging.
+Default = <number> - The default value of the slider.
+ValueName = <string> - The text after the value number.
+Callback = <function> - The function of the slider.
+]]
+Slider:Set(2)
+Tab:AddLabel("Label")
+CoolLabel:Set("Label New!")
+Tab:AddParagraph("Paragraph","Paragraph Content")
+CoolParagraph:Set("Paragraph New!", "New Paragraph Content!")
+Tab:AddTextbox({
+	Name = "Textbox",
+	Default = "default box input",
+	TextDisappear = true,
+	Callback = function(Value)
+		print(Value)
+	end	  
+})
+
+--[[
+Name = <string> - The name of the textbox.
+Default = <string> - The default value of the textbox.
+TextDisappear = <bool> - Makes the text disappear in the textbox after losing focus.
+Callback = <function> - The function of the textbox.
+]]
+Tab:AddBind({
+	Name = "Bind",
+	Default = Enum.KeyCode.E,
+	Hold = false,
+	Callback = function()
+		print("press")
+	end    
+})
+
+--[[
+Name = <string> - The name of the bind.
+Default = <keycode> - The default value of the bind.
+Hold = <bool> - Makes the bind work like: Holding the key > The bind returns true, Not holding the key > Bind returns false.
+Callback = <function> - The function of the bind.
+]]
+Bind:Set(Enum.KeyCode.E)
+Tab:AddDropdown({
+	Name = "Dropdown",
+	Default = "1",
+	Options = {"1", "2"},
+	Callback = function(Value)
+		print(Value)
+	end    
+})
+
+--[[
+Name = <string> - The name of the dropdown.
+Default = <string> - The default value of the dropdown.
+Options = <table> - The options in the dropdown.
+Callback = <function> - The function of the dropdown.
+]]
+Dropdown:Refresh(List<table>,true)
+Dropdown:Set("dropdown option")
+OrionLib:Init()
